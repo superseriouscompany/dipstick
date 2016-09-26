@@ -8,7 +8,7 @@ var port    = process.env.PORT || 3000;
 log.info('hi');
 
 app.get('*', function(req, res) {
-  res.json({hi: true, cool: 'nice'})
+  res.json({hi: true})
 })
 
 app.listen(port, function() {
