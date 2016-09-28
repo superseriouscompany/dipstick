@@ -3,28 +3,50 @@
 # henoku sets up a heroku-like deploy environment for nodejs
 #
 #
+HOST=test2.superserious.co
+LETSENCRYPT_EMAIL=superseriousneil@gmail.com
+RUN_COMMAND="/usr/bin/npm start"
+
+# TODO: use digitalocean api and cloudflare api to create the host
 
 # Setup server
-ssh "root@phoenix.superserious.co" apt-get update -y
-ssh "root@phoenix.superserious.co" apt-get upgrade -y
-# TODO: http://www.codelitt.com/blog/my-first-10-minutes-on-a-server-primer-for-securing-ubuntu/
+ssh "root@$HOST" apt-get update -y
+ssh "root@$HOST" apt-get upgrade -y
+
+# Create user to ssh in with from this computer
+username="$(whoami)"
+ssh "root@$HOST" useradd -s /bin/bash "$username"
+ssh "root@$HOST" mkdir /home/"$username"
+ssh "root@$HOST" mkdir /home/"$username"/.ssh
+ssh "root@$HOST" chmod 700 /home/"$username"/.ssh
+ssh "root@$HOST" cp /root/.ssh/authorized_keys /home/"$username"/.ssh/authorized_keys
+ssh "root@$HOST" chown "$username":"$username" -R /home/"$username"
+ssh "root@$HOST" usermod -aG sudo neilsarkar
+echo "echo \"$username:nope\" | chpasswd" | ssh "root@$HOST"
+
+# Setup firewall
+ssh "root@$HOST" ufw allow 22
+ssh "root@$HOST" ufw allow 80
+ssh "root@$HOST" ufw allow 443
+ssh "root@$HOST" ufw disable
+ssh "root@$HOST" ufw enable
 
 # Install nodejs
-ssh "root@phoenix.superserious.co" apt-get install -y nodejs
-ssh "root@phoenix.superserious.co" ln -s "$(which nodejs)" /usr/bin/node
-ssh "root@phoenix.superserious.co" apt-get install -y npm
+ssh "root@$HOST" apt-get install -y nodejs
+ssh "root@$HOST" ln -s "$(which nodejs)" /usr/bin/node
+ssh "root@$HOST" apt-get install -y npm
 
 # Install nginx
-ssh "root@phoenix.superserious.co" apt-get install -y nginx
+ssh "root@$HOST" apt-get install -y nginx
 
 # Setup letsencrypt
-ssh "root@phoenix.superserious.co" apt-get install -y letsencrypt
-ssh "root@phoenix.superserious.co" letsencrypt certonly -a webroot --webroot-path=/var/www/html -d phoenix.superserious.co --agree-tos --email superseriousneil@gmail.com
-ssh "root@phoenix.superserious.co" 'openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048'
+ssh "root@$HOST" apt-get install -y letsencrypt
+ssh "root@$HOST" letsencrypt certonly -a webroot --webroot-path=/var/www/html -d $HOST --agree-tos --email $LETSENCRYPT_EMAIL
+ssh "root@$HOST" openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 
 # Update nginx to use ssl
-echo "ssl_certificate /etc/letsencrypt/live/phoenix.superserious.co/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/phoenix.superserious.co/privkey.pem;" | ssh "root@phoenix.superserious.co" "cat > /etc/nginx/snippets/ssl-phoenix.superserious.co.conf"
+echo "ssl_certificate /etc/letsencrypt/live/$HOST/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/$HOST/privkey.pem;" | ssh "root@$HOST" "cat > /etc/nginx/snippets/ssl-$HOST.conf"
 
 echo '# from https://cipherli.st/
 # and https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
@@ -45,19 +67,20 @@ resolver_timeout 5s;
 add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
 add_header X-Frame-Options DENY;
 add_header X-Content-Type-Options nosniff;
-ssl_dhparam /etc/ssl/certs/dhparam.pem;' | ssh "root@phoenix.superserious.co" "cat > /etc/nginx/snippets/ssl-params.conf"
+' | ssh "root@$HOST" "cat > /etc/nginx/snippets/ssl-params.conf"
+# TODO: readd this to above ssl_dhparam /etc/ssl/certs/dhparam.pem;
 
-echo 'server {
+echo "server {
     listen 80 default_server;
     listen [::]:80 default_server;
-    server_name phoenix.superserious.co;
-    return 301 https://$server_name$request_uri;
+    server_name $HOST;
+    return 301 https://\$server_name\$request_uri;
 }
 
 server {
     listen 443 ssl http2 default_server;
     listen [::]:443 ssl http2 default_server;
-    include snippets/ssl-phoenix.superserious.co.conf;
+    include snippets/ssl-$HOST.conf;
     include snippets/ssl-params.conf;
 
     root /var/www/html;
@@ -73,28 +96,28 @@ server {
     location ~ /.well-known {
             allow all;
     }
-}' | ssh "root@phoenix.superserious.co" "cat > /etc/nginx/sites-available/default"
+}" | ssh "root@$HOST" "cat > /etc/nginx/sites-available/default"
 
-ssh "root@phoenix.superserious.co" systemctl restart nginx
+ssh "root@$HOST" systemctl restart nginx
 
 # Setup git
-ssh "root@phoenix.superserious.co" useradd -m -s /usr/bin/git-shell git
-ssh "root@phoenix.superserious.co" mkdir -p /home/git/.ssh
-ssh "root@phoenix.superserious.co" chown -R git:git /home/git/.ssh
-ssh "root@phoenix.superserious.co" mkdir -p /opt/src/dipstick
-ssh "root@phoenix.superserious.co" chown -R git:git /opt/src
-ssh "root@phoenix.superserious.co" mkdir -p /dipstick.git
-ssh "root@phoenix.superserious.co" 'cd /dipstick.git && git init --bare'
-ssh "root@phoenix.superserious.co" chown -R git:git /dipstick.git
-echo "git ALL=NOPASSWD: /bin/systemctl restart app.service, /bin/systemctl status app.service" | ssh "root@phoenix.superserious.co" "cat > /etc/sudoers.d/git"
-ssh "root@phoenix.superserious.co" chmod 0440 /etc/sudoers.d/git
-cat ~/.ssh/id_rsa.pub | ssh "root@phoenix.superserious.co" "cat > /home/git/.ssh/authorized_keys"
+ssh "root@$HOST" useradd -m -s /usr/bin/git-shell git
+ssh "root@$HOST" mkdir -p /home/git/.ssh
+ssh "root@$HOST" chown -R git:git /home/git/.ssh
+ssh "root@$HOST" mkdir -p /opt/src/dipstick
+ssh "root@$HOST" chown -R git:git /opt/src
+ssh "root@$HOST" mkdir -p /dipstick.git
+ssh "root@$HOST" 'cd /dipstick.git && git init --bare'
+ssh "root@$HOST" chown -R git:git /dipstick.git
+echo "git ALL=NOPASSWD: /bin/systemctl restart app.service, /bin/systemctl status app.service" | ssh "root@$HOST" "cat > /etc/sudoers.d/git"
+ssh "root@$HOST" chmod 0440 /etc/sudoers.d/git
+cat ~/.ssh/id_rsa.pub | ssh "root@$HOST" "cat > /home/git/.ssh/authorized_keys"
 echo "#!/bin/sh
 git --work-tree=/opt/src/dipstick --git-dir=/dipstick.git checkout -f
 (cd /opt/src/dipstick && npm install)
 sudo /bin/systemctl restart app.service
-sudo /bin/systemctl status app.service" | ssh "root@phoenix.superserious.co" "cat > /dipstick.git/hooks/post-receive"
-ssh "root@phoenix.superserious.co" "chmod +x /dipstick.git/hooks/post-receive"
+sudo /bin/systemctl status app.service" | ssh "root@$HOST" "cat > /dipstick.git/hooks/post-receive"
+ssh "root@$HOST" "chmod +x /dipstick.git/hooks/post-receive"
 
 # Setup app service
 echo "[Unit]
@@ -102,10 +125,12 @@ Description=dipstick nodejs app
 
 [Service]
 WorkingDirectory=/opt/src/dipstick
-ExecStart=/usr/bin/npm start
+ExecStart=$RUN_COMMAND
 Restart=always
 
 [Install]
-WantedBy=multi-user.target" | ssh "root@phoenix.superserious.co" "cat > /etc/systemd/system/app.service"
+WantedBy=multi-user.target" | ssh "root@$HOST" "cat > /etc/systemd/system/app.service"
 
-ssh "root@phoenix.superserious.co" systemctl enable app
+ssh "root@$HOST" systemctl enable app
+
+echo "git@$HOST/dipstick.git"
