@@ -3,50 +3,61 @@
 # henoku sets up a heroku-like deploy environment for nodejs
 #
 #
-HOST=test2.superserious.co
+HOST=test5.superserious.co
 LETSENCRYPT_EMAIL=superseriousneil@gmail.com
 RUN_COMMAND="/usr/bin/npm start"
+ROOT=ubuntu
+ROOT_HOME=/home/ubuntu
+REPO_NAME=marvin
+username="$(whoami)"
 
 # TODO: use digitalocean api and cloudflare api to create the host
 
 # Setup server
-ssh "root@$HOST" apt-get update -y
-ssh "root@$HOST" apt-get upgrade -y
-
-# Create user to ssh in with from this computer
-username="$(whoami)"
-ssh "root@$HOST" useradd -s /bin/bash "$username"
-ssh "root@$HOST" mkdir /home/"$username"
-ssh "root@$HOST" mkdir /home/"$username"/.ssh
-ssh "root@$HOST" chmod 700 /home/"$username"/.ssh
-ssh "root@$HOST" cp /root/.ssh/authorized_keys /home/"$username"/.ssh/authorized_keys
-ssh "root@$HOST" chown "$username":"$username" -R /home/"$username"
-ssh "root@$HOST" usermod -aG sudo neilsarkar
-echo "echo \"$username:nope\" | chpasswd" | ssh "root@$HOST"
-
-# Setup firewall
-ssh "root@$HOST" ufw allow 22
-ssh "root@$HOST" ufw allow 80
-ssh "root@$HOST" ufw allow 443
-ssh "root@$HOST" ufw disable
-ssh "root@$HOST" ufw enable
-
-# Install nodejs
-ssh "root@$HOST" apt-get install -y nodejs
-ssh "root@$HOST" ln -s "$(which nodejs)" /usr/bin/node
-ssh "root@$HOST" apt-get install -y npm
-
-# Install nginx
-ssh "root@$HOST" apt-get install -y nginx
-
-# Setup letsencrypt
-ssh "root@$HOST" apt-get install -y letsencrypt
-ssh "root@$HOST" letsencrypt certonly -a webroot --webroot-path=/var/www/html -d $HOST --agree-tos --email $LETSENCRYPT_EMAIL
-ssh "root@$HOST" openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
-
-# Update nginx to use ssl
+# echo "Updating apt-get..."
+# ssh "$ROOT"@"$HOST" sudo apt-get update -y
+# ssh "$ROOT"@"$HOST" sudo apt-get upgrade -y
+#
+# # Create user to ssh in with from this computer
+# echo "Creating ssh user ${username}..."
+# ssh "$ROOT"@"$HOST" sudo useradd -s /bin/bash "$username"
+# ssh "$ROOT"@"$HOST" sudo mkdir /home/"$username"
+# ssh "$ROOT"@"$HOST" sudo mkdir /home/"$username"/.ssh
+# ssh "$ROOT"@"$HOST" sudo chmod 700 /home/"$username"/.ssh
+# ssh "$ROOT"@"$HOST" sudo cp "$ROOT_HOME"/.ssh/authorized_keys /home/"$username"/.ssh/authorized_keys
+# ssh "$ROOT"@"$HOST" sudo chown "$username":"$username" -R /home/"$username"
+# ssh "$ROOT"@"$HOST" sudo usermod -aG sudo neilsarkar
+# echo "echo \"$username:nope\" | sudo chpasswd" | ssh "$ROOT"@"$HOST"
+#
+# # Setup firewall
+# echo "Setting up firewall..."
+# ssh "$ROOT"@"$HOST" sudo ufw allow 22
+# ssh "$ROOT"@"$HOST" sudo ufw allow 80
+# ssh "$ROOT"@"$HOST" sudo ufw allow 443
+# ssh "$ROOT"@"$HOST" sudo ufw disable
+# ssh "$ROOT"@"$HOST" sudo ufw enable
+#
+# # Install nodejs
+# echo "Installing nodejs..."
+# ssh "$ROOT"@"$HOST" sudo apt-get install -y nodejs
+# ssh "$ROOT"@"$HOST" sudo ln -s "$(which nodejs)" /usr/bin/node
+# ssh "$ROOT"@"$HOST" sudo apt-get install -y npm
+#
+# # Install nginx
+# echo "Installing nginx..."
+# ssh "$ROOT"@"$HOST" sudo apt-get install -y nginx
+#
+# # Setup letsencrypt
+# echo "Setting up letsencrypt..."
+# ssh "$ROOT"@"$HOST" sudo apt-get install -y letsencrypt
+# ssh "$ROOT"@"$HOST" sudo letsencrypt certonly -a webroot --webroot-path=/var/www/html -d $HOST --agree-tos --email $LETSENCRYPT_EMAIL
+# # ssh "$ROOT"@"$HOST" sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+# # TODO: enable this thing?
+#
+# # Update nginx to use ssl
+# echo "Updating nginx to use letsencrypt..."
 echo "ssl_certificate /etc/letsencrypt/live/$HOST/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/$HOST/privkey.pem;" | ssh "root@$HOST" "cat > /etc/nginx/snippets/ssl-$HOST.conf"
+ssl_certificate_key /etc/letsencrypt/live/$HOST/privkey.pem;" | ssh "$ROOT"@"$HOST" "sudo tee /etc/nginx/snippets/ssl-$HOST.conf > /dev/null"
 
 echo '# from https://cipherli.st/
 # and https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
@@ -67,16 +78,14 @@ resolver_timeout 5s;
 add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
 add_header X-Frame-Options DENY;
 add_header X-Content-Type-Options nosniff;
-' | ssh "root@$HOST" "cat > /etc/nginx/snippets/ssl-params.conf"
+' | ssh "$ROOT"@"$HOST" "sudo tee /etc/nginx/snippets/ssl-params.conf > /dev/null"
 # TODO: readd this to above ssl_dhparam /etc/ssl/certs/dhparam.pem;
-
 echo "server {
     listen 80 default_server;
     listen [::]:80 default_server;
     server_name $HOST;
     return 301 https://\$server_name\$request_uri;
 }
-
 server {
     listen 443 ssl http2 default_server;
     listen [::]:443 ssl http2 default_server;
@@ -96,41 +105,43 @@ server {
     location ~ /.well-known {
             allow all;
     }
-}" | ssh "root@$HOST" "cat > /etc/nginx/sites-available/default"
-
-ssh "root@$HOST" systemctl restart nginx
+}" | ssh "$ROOT"@"$HOST" "sudo tee /etc/nginx/sites-available/default >/dev/null"
+ssh "$ROOT"@"$HOST" sudo systemctl restart nginx
 
 # Setup git
-ssh "root@$HOST" useradd -m -s /usr/bin/git-shell git
-ssh "root@$HOST" mkdir -p /home/git/.ssh
-ssh "root@$HOST" chown -R git:git /home/git/.ssh
-ssh "root@$HOST" mkdir -p /opt/src/dipstick
-ssh "root@$HOST" chown -R git:git /opt/src
-ssh "root@$HOST" mkdir -p /dipstick.git
-ssh "root@$HOST" 'cd /dipstick.git && git init --bare'
-ssh "root@$HOST" chown -R git:git /dipstick.git
-echo "git ALL=NOPASSWD: /bin/systemctl restart app.service, /bin/systemctl status app.service" | ssh "root@$HOST" "cat > /etc/sudoers.d/git"
-ssh "root@$HOST" chmod 0440 /etc/sudoers.d/git
-cat ~/.ssh/id_rsa.pub | ssh "root@$HOST" "cat > /home/git/.ssh/authorized_keys"
+echo "Setting up git..."
+ssh "$ROOT"@"$HOST" sudo useradd -m -s /usr/bin/git-shell git
+ssh "$ROOT"@"$HOST" sudo mkdir -p /home/git/.ssh
+ssh "$ROOT"@"$HOST" sudo chown -R git:git /home/git/.ssh
+ssh "$ROOT"@"$HOST" sudo mkdir -p /opt/src/"$REPO_NAME"
+ssh "$ROOT"@"$HOST" sudo chown -R git:git /opt/src
+ssh "$ROOT"@"$HOST" sudo mkdir -p /"$REPO_NAME".git
+ssh "$ROOT"@"$HOST" sudo "cd /$REPO_NAME.git && git init --bare"
+ssh "$ROOT"@"$HOST" sudo chown -R git:git /"$REPO_NAME"
+echo "git ALL=NOPASSWD: /bin/systemctl restart app.service, /bin/systemctl status app.service" | ssh "$ROOT"@"$HOST" "sudo tee /etc/sudoers.d/git"
+ssh "$ROOT"@"$HOST" sudo chmod 0440 /etc/sudoers.d/git
+cat ~/.ssh/id_rsa.pub | ssh "$ROOT"@"$HOST" "sudo tee /home/git/.ssh/authorized_keys >/dev/null"
 echo "#!/bin/sh
-git --work-tree=/opt/src/dipstick --git-dir=/dipstick.git checkout -f
-(cd /opt/src/dipstick && npm install)
+git --work-tree=/opt/src/${REPO_NAME} --git-dir=/${REPO_NAME}.git checkout -f
+(cd /opt/src/$REPO_NAME && npm install)
 sudo /bin/systemctl restart app.service
-sudo /bin/systemctl status app.service" | ssh "root@$HOST" "cat > /dipstick.git/hooks/post-receive"
-ssh "root@$HOST" "chmod +x /dipstick.git/hooks/post-receive"
+sudo /bin/systemctl status app.service" | ssh "$ROOT"@"$HOST" "sudo tee /${REPO_NAME}.git/hooks/post-receive >/dev/null"
+ssh "$ROOT"@"$HOST" sudo "chmod +x /${REPO_NAME}.git/hooks/post-receive"
 
 # Setup app service
+echo "Setting up app service..."
 echo "[Unit]
-Description=dipstick nodejs app
+Description=${REPO_NAME} nodejs app
 
 [Service]
-WorkingDirectory=/opt/src/dipstick
-ExecStart=$RUN_COMMAND
+Environment=NODE_ENV=production
+WorkingDirectory=/opt/src/${REPO_NAME}
+ExecStart=${RUN_COMMAND}
 Restart=always
 
 [Install]
-WantedBy=multi-user.target" | ssh "root@$HOST" "cat > /etc/systemd/system/app.service"
+WantedBy=multi-user.target" | ssh "$ROOT"@"$HOST" sudo "cat > /etc/systemd/system/app.service"
 
-ssh "root@$HOST" systemctl enable app
+ssh "$ROOT"@"$HOST" sudo systemctl enable app
 
-echo "git@$HOST/dipstick.git"
+echo "ssh://git@$HOST/${REPO_NAME}.git"
