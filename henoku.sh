@@ -56,57 +56,57 @@ username="$(whoami)"
 #
 # # Update nginx to use ssl
 # echo "Updating nginx to use letsencrypt..."
-echo "ssl_certificate /etc/letsencrypt/live/$HOST/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/$HOST/privkey.pem;" | ssh "$ROOT"@"$HOST" "sudo tee /etc/nginx/snippets/ssl-$HOST.conf > /dev/null"
-
-echo '# from https://cipherli.st/
-# and https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
-
-ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-ssl_prefer_server_ciphers on;
-ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
-ssl_ecdh_curve secp384r1;
-ssl_session_cache shared:SSL:10m;
-ssl_session_tickets off;
-ssl_stapling on;
-ssl_stapling_verify on;
-resolver 8.8.8.8 8.8.4.4 valid=300s;
-resolver_timeout 5s;
-# Disable preloading HSTS for now.  You can use the commented out header line that includes
-# the "preload" directive if you understand the implications.
-#add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
-add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
-add_header X-Frame-Options DENY;
-add_header X-Content-Type-Options nosniff;
-' | ssh "$ROOT"@"$HOST" "sudo tee /etc/nginx/snippets/ssl-params.conf > /dev/null"
-# TODO: readd this to above ssl_dhparam /etc/ssl/certs/dhparam.pem;
-echo "server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    server_name $HOST;
-    return 301 https://\$server_name\$request_uri;
-}
-server {
-    listen 443 ssl http2 default_server;
-    listen [::]:443 ssl http2 default_server;
-    include snippets/ssl-$HOST.conf;
-    include snippets/ssl-params.conf;
-
-    root /var/www/html;
-
-    index index.html index.htm index.nginx-debian.html;
-
-    server_name _;
-
-    location / {
-            proxy_pass http://localhost:3000;
-    }
-
-    location ~ /.well-known {
-            allow all;
-    }
-}" | ssh "$ROOT"@"$HOST" "sudo tee /etc/nginx/sites-available/default >/dev/null"
-ssh "$ROOT"@"$HOST" sudo systemctl restart nginx
+# echo "ssl_certificate /etc/letsencrypt/live/$HOST/fullchain.pem;
+# ssl_certificate_key /etc/letsencrypt/live/$HOST/privkey.pem;" | ssh "$ROOT"@"$HOST" "sudo tee /etc/nginx/snippets/ssl-$HOST.conf > /dev/null"
+#
+# echo '# from https://cipherli.st/
+# # and https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+#
+# ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+# ssl_prefer_server_ciphers on;
+# ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+# ssl_ecdh_curve secp384r1;
+# ssl_session_cache shared:SSL:10m;
+# ssl_session_tickets off;
+# ssl_stapling on;
+# ssl_stapling_verify on;
+# resolver 8.8.8.8 8.8.4.4 valid=300s;
+# resolver_timeout 5s;
+# # Disable preloading HSTS for now.  You can use the commented out header line that includes
+# # the "preload" directive if you understand the implications.
+# #add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+# add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
+# add_header X-Frame-Options DENY;
+# add_header X-Content-Type-Options nosniff;
+# ' | ssh "$ROOT"@"$HOST" "sudo tee /etc/nginx/snippets/ssl-params.conf > /dev/null"
+# # TODO: readd this to above ssl_dhparam /etc/ssl/certs/dhparam.pem;
+# echo "server {
+#     listen 80 default_server;
+#     listen [::]:80 default_server;
+#     server_name $HOST;
+#     return 301 https://\$server_name\$request_uri;
+# }
+# server {
+#     listen 443 ssl http2 default_server;
+#     listen [::]:443 ssl http2 default_server;
+#     include snippets/ssl-$HOST.conf;
+#     include snippets/ssl-params.conf;
+#
+#     root /var/www/html;
+#
+#     index index.html index.htm index.nginx-debian.html;
+#
+#     server_name _;
+#
+#     location / {
+#             proxy_pass http://localhost:3000;
+#     }
+#
+#     location ~ /.well-known {
+#             allow all;
+#     }
+# }" | ssh "$ROOT"@"$HOST" "sudo tee /etc/nginx/sites-available/default >/dev/null"
+# ssh "$ROOT"@"$HOST" sudo systemctl restart nginx
 
 # Setup git
 echo "Setting up git..."
@@ -116,7 +116,7 @@ ssh "$ROOT"@"$HOST" sudo chown -R git:git /home/git/.ssh
 ssh "$ROOT"@"$HOST" sudo mkdir -p /opt/src/"$REPO_NAME"
 ssh "$ROOT"@"$HOST" sudo chown -R git:git /opt/src
 ssh "$ROOT"@"$HOST" sudo mkdir -p /"$REPO_NAME".git
-ssh "$ROOT"@"$HOST" sudo "cd /$REPO_NAME.git && git init --bare"
+ssh "$ROOT"@"$HOST" "sudo -s 'cd /$REPO_NAME.git && git init --bare'"
 ssh "$ROOT"@"$HOST" sudo chown -R git:git /"$REPO_NAME"
 echo "git ALL=NOPASSWD: /bin/systemctl restart app.service, /bin/systemctl status app.service" | ssh "$ROOT"@"$HOST" "sudo tee /etc/sudoers.d/git"
 ssh "$ROOT"@"$HOST" sudo chmod 0440 /etc/sudoers.d/git
