@@ -124,7 +124,7 @@ ssh "$ROOT"@"$HOST" sudo chmod 0440 /etc/sudoers.d/git
 cat ~/.ssh/id_rsa.pub | ssh "$ROOT"@"$HOST" "sudo tee /home/git/.ssh/authorized_keys >/dev/null"
 echo "#!/bin/sh
 git --work-tree=/opt/src/${REPO_NAME} --git-dir=/${REPO_NAME}.git checkout -f
-(cd /opt/src/$REPO_NAME && npm install)
+(cd /opt/src/$REPO_NAME && NODE_ENV=production npm install)
 sudo /bin/systemctl restart app.service
 sudo /bin/systemctl status app.service" | ssh "$ROOT"@"$HOST" "sudo tee /${REPO_NAME}.git/hooks/post-receive >/dev/null"
 ssh "$ROOT"@"$HOST" sudo "chmod +x /${REPO_NAME}.git/hooks/post-receive"
