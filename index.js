@@ -11,6 +11,12 @@ app.get('*', function(req, res) {
   res.json({hi: true, good: 'great'})
 })
 
+app.post('/cool', function(req, res) {
+  res.json({
+    sick: Math.random()
+  })
+})
+
 app.listen(port, function() {
   log.info({port: port}, 'server is running');
 })
