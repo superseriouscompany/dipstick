@@ -3,15 +3,15 @@
 # henoku sets up a heroku-like deploy environment for nodejs
 #
 #
-HOST=test7.superserious.co
+HOST=${HOST:-test.superserious.co}
+REPO_NAME=${REPO_NAME:-app}
+RUN_COMMAND=${RUN_COMMAND:-/usr/bin/npm start}
+ROOT=${ROOT:-ubuntu}
+ROOT_HOME=${ROOT_HOME:-/home/ubuntu}
 LETSENCRYPT_EMAIL=superseriousneil@gmail.com
-RUN_COMMAND="/usr/bin/npm start"
-ROOT=ubuntu
-ROOT_HOME=/home/ubuntu
-REPO_NAME=marvin
 username="$(whoami)"
 
-# TODO: use digitalocean api and cloudflare api to create the host
+# TODO: use digitalocean/aws api and cloudflare api to create the host
 
 # Setup server
 echo "Updating apt-get..."
@@ -27,6 +27,7 @@ ssh "$ROOT"@"$HOST" sudo chmod 700 /home/"$username"/.ssh
 ssh "$ROOT"@"$HOST" sudo cp "$ROOT_HOME"/.ssh/authorized_keys /home/"$username"/.ssh/authorized_keys
 ssh "$ROOT"@"$HOST" sudo chown "$username":"$username" -R /home/"$username"
 ssh "$ROOT"@"$HOST" sudo usermod -aG sudo neilsarkar
+# TODO: make this passwordless
 echo "echo \"$username:nope\" | sudo chpasswd" | ssh "$ROOT"@"$HOST"
 
 # Setup firewall
