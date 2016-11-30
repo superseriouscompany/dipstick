@@ -31,12 +31,24 @@
       "ssh_username": "neilsarkar"
     }
   ],
-  "provisioners": [{
-    "type": "shell",
-    "inline": [
-      "sleep 30",
-      "sudo apt-get update",
-      "sudo apt-get install -y redis-server"
-    ]
-  }]
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 30",
+        "sudo apt-get update",
+        "sudo apt-get install -y nginx"
+      ]
+    },
+    {
+      "type": "shell",
+      "script": "setup_nginx.sh"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo systemctl restart nginx"
+      ]
+    }
+  ]
 }
