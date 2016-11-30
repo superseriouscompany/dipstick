@@ -2,24 +2,24 @@
   "variables": {
     "aws_access_key": "",
     "aws_secret_key": "",
-    "do_api_token":   ""
+    "do_token":       "{{env `DO_TOKEN`}}"
   },
   "builders": [
     {
       "type": "amazon-ebs",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
-      "region": "us-east-1",
-      "source_ami": "ami-45b69e52",
+      "region": "eu-west-1",
+      "source_ami": "ami-07174474",
       "instance_type": "t2.micro",
       "ssh_username": "ubuntu",
       "ami_name": "packer-example {{timestamp}}"
     },
     {
       "type": "digitalocean",
-      "api_token": "{{user `do_api_token`}}",
+      "api_token": "{{user `do_token`}}",
       "image": "ubuntu-16-04-x64",
-      "region": "nyc3",
+      "region": "lon1",
       "size": "512mb"
     },
     {
@@ -27,7 +27,7 @@
       "account_file": "gcp.json",
       "project_id": "emerald-mission-151101",
       "source_image": "ubuntu-1604-xenial-v20161115",
-      "zone": "us-central1-a",
+      "zone": "europe-west1-b",
       "ssh_username": "neilsarkar"
     }
   ],
