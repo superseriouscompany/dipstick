@@ -29,3 +29,10 @@ A nodejs app to test operational configurations.
 1. Open the http port on one of the instances
 1. Route DNS to load balancer
 1. Route DNS to single instance
+
+### DIGITAL OCEAN
+
+1. Create three instances from the new image with private ips enabled
+1. Create a HAProxy
+
+Note: ssh to aws with `ubuntu` username and digitalocean with `root`
