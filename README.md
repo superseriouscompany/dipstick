@@ -8,7 +8,7 @@ A nodejs app to test operational configurations.
 
 ## Setup load balancers
 
-    $ packer build -var 'aws_access_key=AKIAJQUENXU3RKGIAVQA' -var 'aws_secret_key=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' nginx.json
+    $ packer build nginx.json
 
 ### AWS
 
