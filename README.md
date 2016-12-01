@@ -8,7 +8,7 @@ A nodejs app to test operational configurations.
 
 ## Setup load balancers
 
-    $ packer build -var 'aws_access_key=AKIAJQUENXU3RKGIAVQA' -var 'aws_secret_key=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' nginx.json
+    $ packer build nginx.json
 
 ### AWS
 
@@ -36,3 +36,22 @@ A nodejs app to test operational configurations.
 1. Create a HAProxy
 
 Note: ssh to aws with `ubuntu` username and digitalocean with `root`
+
+## Monitoring
+
+### Datadog
+
+1. Sign up for datadog
+1. Install mac osx agent
+1. Follow aws integration steps http://docs.datadoghq.com/integrations/aws/
+1. Enable detailed monitoring http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html
+1. Star default AWS EC2, ELB and overview graphs
+1. Create dashboard
+1. Create graph with CPU utilization per instance
+1. Create graph with pct memory available per instance
+1. Add DD_API_KEY to environment variables
+1. Install agent on hosts
+1. Add ELB monitor for 2xx, 4xx, 5xx, request count
+1. Add ELB monitor for latency
+1. Add nginx integration to agent
+1. Add nginx RPS per host to datadog

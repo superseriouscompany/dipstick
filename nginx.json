@@ -1,8 +1,9 @@
 {
   "variables": {
-    "aws_access_key": "",
-    "aws_secret_key": "",
-    "do_token":       "{{env `DO_TOKEN`}}"
+    "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
+    "do_token":       "{{env `DO_TOKEN`}}",
+    "dd_api_key":     "{{env `DD_API_KEY`}}"
   },
   "builders": [
     {
@@ -37,7 +38,8 @@
       "inline": [
         "sleep 30",
         "sudo apt-get update",
-        "sudo apt-get install -y nginx"
+        "sudo apt-get install -y nginx",
+        "DD_API_KEY={{user `dd_api_key`}} bash -c \"$(curl -L https://raw.githubusercontent.com/DataDog/dd-agent/master/packaging/datadog-agent/source/install_agent.sh)\""
       ]
     },
     {
@@ -47,7 +49,8 @@
     {
       "type": "shell",
       "inline": [
-        "sudo systemctl restart nginx"
+        "sudo systemctl restart nginx",
+        "sudo /etc/init.d/datadog-agent restart"
       ]
     }
   ]
