@@ -52,3 +52,6 @@ Note: ssh to aws with `ubuntu` username and digitalocean with `root`
 1. Add DD_API_KEY to environment variables
 1. Install agent on hosts
 1. Add ELB monitor for 2xx, 4xx, 5xx, request count
+1. Add ELB monitor for latency
+1. Add nginx integration to agent
+1. Add nginx RPS per host to datadog

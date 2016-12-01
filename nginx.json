@@ -49,7 +49,8 @@
     {
       "type": "shell",
       "inline": [
-        "sudo systemctl restart nginx"
+        "sudo systemctl restart nginx",
+        "sudo /etc/init.d/datadog-agent restart"
       ]
     }
   ]
