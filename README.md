@@ -17,10 +17,7 @@ A nodejs app to test operational configurations.
 
     $ terraform apply
 
-### DIGITAL OCEAN
-
-1. Create three instances from the new image with private ips enabled
-1. Create a HAProxy
+Note: For digital ocean, you now need to take the ip addresses that were output and plug them into a HAProxy instance.
 
 Note: ssh to aws with `ubuntu` username and digitalocean with `root`
 
