@@ -1,8 +1,8 @@
 {
   "variables": {
-    "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
-    "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
-    "do_token":       "{{env `DO_TOKEN`}}",
+    "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "do_token":       "{{env `DO_API_TOKEN`}}",
     "dd_api_key":     "{{env `DD_API_KEY`}}"
   },
   "builders": [
