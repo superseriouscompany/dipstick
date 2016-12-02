@@ -49,3 +49,12 @@ variable "gcp_public_key_path" {
   description = "Path to file containing public key"
   default     = "~/.ssh/id_rsa.pub"
 }
+
+/* DO */
+variable "do_image_name" {
+  default = "21268999"
+}
+
+variable "do_region" {
+  default = "lon1"
+}

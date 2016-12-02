@@ -9,3 +9,7 @@ output "gcp_address" {
 output "gcp_instances" {
   value = "${join(" ", google_compute_instance.nginx.*.network_interface.0.access_config.0.assigned_nat_ip)}"
 }
+
+output "do_ips" {
+  value = "${join(" ", digitalocean_droplet.nginx.*.ipv4_address)}"
+}
