@@ -1,7 +1,7 @@
 provider "aws" {
   access_key = "${var.access_key}"
   secret_key = "${var.secret_key}"
-  region     = "${var.region}"
+  region     = "${var.aws_region}"
 }
 
 # Create a VPC to launch our instances into
@@ -99,8 +99,8 @@ resource "aws_elb" "web" {
 }
 
 resource "aws_key_pair" "auth" {
-  key_name   = "${var.key_name}"
-  public_key = "${file(var.public_key_path)}"
+  key_name   = "${var.aws_key_name}"
+  public_key = "${file(var.aws_public_key_path)}"
 }
 
 resource "aws_instance" "nginx" {
