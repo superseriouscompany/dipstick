@@ -88,7 +88,7 @@ resource "aws_elb" "web" {
 
   subnets         = ["${aws_subnet.default.id}"]
   security_groups = ["${aws_security_group.elb.id}"]
-  instances       = ["${aws_instance.nginx.id}"]
+  instances       = ["${aws_instance.nginx.*.id}"]
 
   listener {
     instance_port     = 80
@@ -104,6 +104,8 @@ resource "aws_key_pair" "auth" {
 }
 
 resource "aws_instance" "nginx" {
+  count = 3
+
   # The connection block tells our provisioner how to
   # communicate with the resource (instance)
   connection {
