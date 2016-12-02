@@ -80,7 +80,7 @@ echo "server {
             return 200 'lawng';
     }
 
-    location /basic_status {
+    location /nginx_status {
             stub_status on;
 
             access_log off;
@@ -94,9 +94,9 @@ echo "server {
 echo "init_config:
 
 instances:
-  - nginx_status_url: http://localhost/basic_status
+  - nginx_status_url: http://localhost/nginx_status
       tags:
-        - instance: foo
+        - instance: lawng
 " | sudo tee /etc/dd-agent/conf.d/nginx.yaml
 
 # Make directory for access logs
