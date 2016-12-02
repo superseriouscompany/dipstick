@@ -6,40 +6,24 @@ A nodejs app to test operational configurations.
 
     $ npm run dev
 
-## Setup load balancers
+## Generate nginx images
 
     $ packer build nginx.json
 
-### AWS
+### Set up AWS, GCP and Digital Ocean load balancers
 
-1. Create three instances in AWS from the new image
-1. Create ELB in AWS
-1. Attach instances to ELB
-1. Change security group of ELB to open http 80
-1. Change security group of one instance to open http 80
-1. Route DNS to load balancer
-1. Route DNS to single instance.
+1. Save google cloud platform credentials as gcp.json
+1. Make aws keys available at TF_VAR_access_key and TF_VAR_secret_key
 
-### GCP
+    $ terraform apply
 
-1. Create an instance group
-1. Create three instances in the group from the new image
-1. Create a load balancer
-1. Attach the instance group to the load balancer
-1. Open the http port on one of the instances
-1. Route DNS to load balancer
-1. Route DNS to single instance
-
-### DIGITAL OCEAN
-
-1. Create three instances from the new image with private ips enabled
-1. Create a HAProxy
+Note: For digital ocean, you now need to take the ip addresses that were output and plug them into a HAProxy instance.
 
 Note: ssh to aws with `ubuntu` username and digitalocean with `root`
 
 ## Monitoring
 
-### Datadog
+### Datadog AWS
 
 1. Sign up for datadog
 1. Install mac osx agent
@@ -55,3 +39,8 @@ Note: ssh to aws with `ubuntu` username and digitalocean with `root`
 1. Add ELB monitor for latency
 1. Add nginx integration to agent
 1. Add nginx RPS per host to datadog
+
+### Datadog GCP
+
+1. Add gcp integration
+1.
