@@ -1,4 +1,4 @@
-/*provider "google" {
+provider "google" {
   region      = "${var.gcp_region}"
   project     = "${var.project_name}"
   credentials = "${file("${var.credentials_file_path}")}"
@@ -65,4 +65,4 @@ resource "google_compute_firewall" "default" {
 
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["www-node"]
-}*/
+}
