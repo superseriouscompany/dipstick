@@ -22,6 +22,7 @@ A nodejs app to test operational configurations.
 
 ### GCP
 
+1. save credentials as gcp.json
 1. Create an instance group
 1. Create three instances in the group from the new image
 1. Create a load balancer
@@ -39,7 +40,7 @@ Note: ssh to aws with `ubuntu` username and digitalocean with `root`
 
 ## Monitoring
 
-### Datadog
+### Datadog AWS
 
 1. Sign up for datadog
 1. Install mac osx agent
@@ -55,3 +56,8 @@ Note: ssh to aws with `ubuntu` username and digitalocean with `root`
 1. Add ELB monitor for latency
 1. Add nginx integration to agent
 1. Add nginx RPS per host to datadog
+
+### Datadog GCP
+
+1. Add gcp integration
+1. 
