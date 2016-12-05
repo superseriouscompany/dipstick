@@ -13,7 +13,7 @@ variable "project_name" {
 
 variable "credentials_file_path" {
   description = "Path to the JSON file used to describe your account credentials"
-  default     = "./gcp.json"
+  default     = "../gcp.json"
 }
 
 variable "gcp_image_name" {
@@ -23,6 +23,10 @@ variable "gcp_image_name" {
 variable "gcp_public_key_path" {
   description = "Path to file containing public key"
   default     = "~/.ssh/id_rsa.pub"
+}
+
+variable "gcp_instance_count" {
+  default = "1"
 }
 
 provider "google" {
@@ -53,7 +57,7 @@ resource "google_compute_forwarding_rule" "default" {
 }
 
 resource "google_compute_instance" "nginx" {
-  count = 1
+  count = "${var.gcp_instance_count}"
 
   name         = "tf-nginx-${count.index}"
   machine_type = "f1-micro"
