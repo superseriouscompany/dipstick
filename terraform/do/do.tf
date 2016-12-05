@@ -10,3 +10,15 @@ resource "digitalocean_droplet" "nginx" {
   name               = "terraform"
   count              = 3
 }
+
+output "do_ips" {
+  value = "${join(" ", digitalocean_droplet.nginx.*.ipv4_address)}"
+}
+
+variable "do_image_name" {
+  default = "21268999"
+}
+
+variable "do_region" {
+  default = "lon1"
+}
