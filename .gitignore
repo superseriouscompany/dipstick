@@ -1,3 +1,4 @@
 node_modules
 gcp.json
 terraform.tfstate*
+client_golang

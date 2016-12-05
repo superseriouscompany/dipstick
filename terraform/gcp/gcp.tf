@@ -26,7 +26,7 @@ resource "google_compute_forwarding_rule" "default" {
 }
 
 resource "google_compute_instance" "nginx" {
-  count = 3
+  count = 1
 
   name         = "tf-nginx-${count.index}"
   machine_type = "f1-micro"
