@@ -6,9 +6,9 @@ A nodejs app to test operational configurations.
 
     $ npm run dev
 
-## Generate nginx images
+## Generate packer image
 
-    $ packer build nginx.json
+    $ packer build ssc.json
 
 ### Set up AWS, GCP and Digital Ocean load balancers
 

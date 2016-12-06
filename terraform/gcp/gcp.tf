@@ -1,3 +1,11 @@
+variable "gcp_image_name" {
+  default = "packer-1480990486"
+}
+
+variable "gcp_instance_count" {
+  default = "1"
+}
+
 variable "gcp_region" {
   default = "europe-west1"
 }
@@ -16,17 +24,9 @@ variable "credentials_file_path" {
   default     = "../gcp.json"
 }
 
-variable "gcp_image_name" {
-  default = "packer-1480653901"
-}
-
 variable "gcp_public_key_path" {
   description = "Path to file containing public key"
   default     = "~/.ssh/id_rsa.pub"
-}
-
-variable "gcp_instance_count" {
-  default = "1"
 }
 
 provider "google" {

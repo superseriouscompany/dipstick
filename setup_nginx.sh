@@ -1,3 +1,5 @@
+sudo apt-get install -y nginx
+
 # nginx config
 echo "user www-data;
 worker_processes auto;

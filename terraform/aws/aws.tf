@@ -1,3 +1,11 @@
+variable "aws_ami" {
+  default = "ami-ca6833b9"
+}
+
+variable "aws_count" {
+  default = "1"
+}
+
 variable "aws_region" {
   default     = "eu-west-1"
   description = "AWS region to launch servers."
@@ -127,7 +135,7 @@ resource "aws_key_pair" "auth" {
 }
 
 resource "aws_instance" "nginx" {
-  count = 3
+  count = "${var.gcp_instance_count}"
 
   # The connection block tells our provisioner how to
   # communicate with the resource (instance)
@@ -138,7 +146,7 @@ resource "aws_instance" "nginx" {
     # The connection will use the local SSH agent for authentication.
   }
 
-  ami           = "ami-e8c49d9b"
+  ami           = "${aws_ami}"
   instance_type = "t2.nano"
 
   # The name of our SSH keypair we created above.
