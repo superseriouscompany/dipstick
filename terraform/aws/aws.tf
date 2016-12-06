@@ -1,3 +1,26 @@
+variable "aws_region" {
+  default     = "eu-west-1"
+  description = "AWS region to launch servers."
+}
+
+variable "access_key" {}
+variable "secret_key" {}
+
+variable "aws_key_name" {
+  default     = "terraform"
+  description = "Desired name of key pair"
+}
+
+variable "aws_public_key_path" {
+  default     = "~/.ssh/id_rsa.pub"
+  description = <<DESCRIPTION
+Path to the SSH public key to be used for authentication.
+Ensure this keypair is added to your local SSH agent so provisioners can
+connect.
+Example: ~/.ssh/terraform.pub
+DESCRIPTION
+}
+
 provider "aws" {
   access_key = "${var.access_key}"
   secret_key = "${var.secret_key}"
@@ -128,4 +151,8 @@ resource "aws_instance" "nginx" {
   # environment it's more common to have a separate private subnet for
   # backend instances.
   subnet_id = "${aws_subnet.default.id}"
+}
+
+output "elb_address" {
+  value = "${aws_elb.web.dns_name}"
 }

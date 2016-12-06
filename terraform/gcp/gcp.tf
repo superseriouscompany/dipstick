@@ -1,3 +1,34 @@
+variable "gcp_region" {
+  default = "europe-west1"
+}
+
+variable "gcp_region_zone" {
+  default = "europe-west1-b"
+}
+
+variable "project_name" {
+  default = "emerald-mission-151101"
+  description = "The ID of the Google Cloud project"
+}
+
+variable "credentials_file_path" {
+  description = "Path to the JSON file used to describe your account credentials"
+  default     = "../gcp.json"
+}
+
+variable "gcp_image_name" {
+  default = "packer-1480653901"
+}
+
+variable "gcp_public_key_path" {
+  description = "Path to file containing public key"
+  default     = "~/.ssh/id_rsa.pub"
+}
+
+variable "gcp_instance_count" {
+  default = "1"
+}
+
 provider "google" {
   region      = "${var.gcp_region}"
   project     = "${var.project_name}"
@@ -26,7 +57,7 @@ resource "google_compute_forwarding_rule" "default" {
 }
 
 resource "google_compute_instance" "nginx" {
-  count = 3
+  count = "${var.gcp_instance_count}"
 
   name         = "tf-nginx-${count.index}"
   machine_type = "f1-micro"
@@ -65,4 +96,12 @@ resource "google_compute_firewall" "default" {
 
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["www-node"]
+}
+
+output "gcp_address" {
+  value = "${google_compute_forwarding_rule.default.ip_address}"
+}
+
+output "gcp_instances" {
+  value = "${join(" ", google_compute_instance.nginx.*.network_interface.0.access_config.0.assigned_nat_ip)}"
 }
