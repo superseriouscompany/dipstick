@@ -15,11 +15,11 @@ A nodejs app to test operational configurations.
 1. Save google cloud platform credentials as gcp.json
 1. Make aws keys available at TF_VAR_access_key and TF_VAR_secret_key
 
-    $ terraform apply
+    $ (cd terraform && terraform apply)
 
 Note: For digital ocean, you now need to take the ip addresses that were output and plug them into a HAProxy instance.
 
-Note: ssh to aws with `ubuntu` username and digitalocean with `root`
+Note: ssh to aws/gcp with `ubuntu` username and digitalocean with `root`
 
 ## Monitoring
 
@@ -43,4 +43,12 @@ Note: ssh to aws with `ubuntu` username and digitalocean with `root`
 ### Datadog GCP
 
 1. Add gcp integration
-1.
+
+## Prometheus
+
+1. Download prometheus https://prometheus.io/download/
+
+    $ tar -xzvf prometheus-1.4.1.darwin-amd64
+    $ ./prometheus-1.4.1.darwin-amd64 -data.file=./prometheus.yml
+
+Add new server IPs to prometheus.yml
