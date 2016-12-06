@@ -19,29 +19,29 @@ rule_files:
 # Here it's Prometheus itself.
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  # - job_name: 'prometheus'
-  #
-  #   scrape_interval: 5s
-  #   # metrics_path defaults to '/metrics'
-  #   # scheme defaults to 'http'.
-  #
-  #   static_configs:
-  #     - targets: ['localhost:9090']
-  #
-  # - job_name: 'example-random'
-  #   scrape_interval: 5s
-  #
-  #   static_configs:
-  #     - targets: ['localhost:8080', 'localhost:8081']
-  #       labels:
-  #         group: 'production'
-  #
-  #     - targets: ['localhost:8082']
-  #       labels:
-  #         group: 'canary'
+  - job_name: 'prometheus'
+
+    scrape_interval: 5s
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'example-random'
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: ['localhost:8080', 'localhost:8081']
+        labels:
+          group: 'production'
+
+      - targets: ['localhost:8082']
+        labels:
+          group: 'canary'
 
   - job_name: 'lawng'
     scrape_interval: 5s
 
     static_configs:
-      - targets: ['104.155.34.64:9100']
+      - targets: ['104.199.94.241:9100']
