@@ -45,3 +45,9 @@ scrape_configs:
 
     static_configs:
       - targets: ['104.199.94.241:9100']
+
+  - job_name: 'nginx_latency'
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: ['104.199.94.241']

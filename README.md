@@ -52,3 +52,19 @@ Note: ssh to aws/gcp with `ubuntu` username and digitalocean with `root`
     $ ./prometheus-1.4.1.darwin-amd64/prometheus -config.file=./prometheus.yml
 
 Add new server IPs to prometheus.yml
+
+## Grafana
+
+CPU and Memory
+
+1. `$ brew install grafana`
+1. start prometheus
+1. add prometheus datasource
+1. add prometheus dashboard
+1. import single instance json
+
+Latency
+
+1. follow installation instructions https://github.com/knyar/nginx-lua-prometheus
+1. hook up prometheus.yml to the nginx config
+1. average latency: rate(nginx_http_request_duration_seconds_sum[5m]) / rate(nginx_http_request_duration_seconds_count[5m])
