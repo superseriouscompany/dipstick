@@ -49,6 +49,6 @@ Note: ssh to aws/gcp with `ubuntu` username and digitalocean with `root`
 1. Download prometheus https://prometheus.io/download/
 
     $ tar -xzvf prometheus-1.4.1.darwin-amd64
-    $ ./prometheus-1.4.1.darwin-amd64 -data.file=./prometheus.yml
+    $ ./prometheus-1.4.1.darwin-amd64/prometheus -config.file=./prometheus.yml
 
 Add new server IPs to prometheus.yml
