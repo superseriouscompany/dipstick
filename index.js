@@ -7,14 +7,23 @@ var port    = process.env.PORT || 3000;
 
 log.info('hi');
 
-app.get('*', function(req, res) {
-  res.json({hi: true, good: 'great'})
-})
-
 app.post('/cool', function(req, res) {
   res.json({
     sick: Math.random()
   })
+})
+
+app.get('/slow', function(req, res) {
+  const time = 1000;
+  setTimeout(function() {
+    res.json({
+      time: time,
+    })
+  }, time);
+})
+
+app.get('*', function(req, res) {
+  res.json({hi: true, good: 'great'})
 })
 
 app.listen(port, function() {
