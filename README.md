@@ -21,6 +21,13 @@ Note: For digital ocean, you now need to take the ip addresses that were output 
 
 Note: ssh to aws/gcp with `ubuntu` username and digitalocean with `root`
 
+### Running just one service (e.g. gcp)
+
+    $ cd terraform/gcp
+    $ terraform apply
+
+remember that you have to `terraform destroy` separately in each folder you start shit up from.
+
 ## Monitoring
 
 ### Datadog AWS
