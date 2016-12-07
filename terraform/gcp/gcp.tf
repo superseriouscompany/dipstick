@@ -14,6 +14,10 @@ variable "gcp_region_zone" {
   default = "europe-west1-b"
 }
 
+variable "gcp_machine_type" {
+  default = "f1-micro"
+}
+
 variable "project_name" {
   default = "emerald-mission-151101"
   description = "The ID of the Google Cloud project"
@@ -60,7 +64,36 @@ resource "google_compute_instance" "nginx" {
   count = "${var.gcp_instance_count}"
 
   name         = "tf-nginx-${count.index}"
-  machine_type = "f1-micro"
+  machine_type = "${var.gcp_machine_type}"
+  zone         = "${var.gcp_region_zone}"
+  tags         = ["www-node"]
+
+  disk {
+    image = "${var.gcp_image_name}"
+  }
+
+  network_interface {
+    network = "default"
+
+    access_config {
+      # Ephemeral
+    }
+  }
+
+  metadata {
+    ssh-keys = "root:${file("${var.gcp_public_key_path}")}"
+  }
+
+  service_account {
+    scopes = ["https://www.googleapis.com/auth/compute.readonly"]
+  }
+}
+
+resource "google_compute_instance" "elk" {
+  count = "1"
+
+  name         = "tf-elk"
+  machine_type = "n1-standard-1"
   zone         = "${var.gcp_region_zone}"
   tags         = ["www-node"]
 
@@ -91,7 +124,7 @@ resource "google_compute_firewall" "default" {
 
   allow {
     protocol = "tcp"
-    ports    = ["80"]
+    ports    = ["80", "9100"]
   }
 
   source_ranges = ["0.0.0.0/0"]
@@ -104,4 +137,8 @@ output "gcp_address" {
 
 output "gcp_instances" {
   value = "${join(" ", google_compute_instance.nginx.*.network_interface.0.access_config.0.assigned_nat_ip)}"
+}
+
+output "elk_instances" {
+  value = "${join(" ", google_compute_instance.elk.*.network_interface.0.access_config.0.assigned_nat_ip)}"
 }

@@ -12,7 +12,7 @@ A nodejs app to test operational configurations.
 
 ### Set up AWS, GCP and Digital Ocean load balancers
 
-1. Save google cloud platform credentials as gcp.json
+1. Save google cloud platform credentials as gcp.json and create symbolic links to `terraform/` and `terraform/gcp`
 1. Make aws keys available at TF_VAR_access_key and TF_VAR_secret_key
 
     $ (cd terraform && terraform apply)
@@ -68,3 +68,17 @@ Latency
 1. follow installation instructions https://github.com/knyar/nginx-lua-prometheus
 1. hook up prometheus.yml to the nginx config
 1. average latency: rate(nginx_http_request_duration_seconds_sum[5m]) / rate(nginx_http_request_duration_seconds_count[5m])
+1. p99 using quantiles
+1. per endpoint hopefully using lua
+
+RPS
+1. ???
+
+## ELK and metricsbeat
+
+1. https://www.elastic.co/guide/en/beats/libbeat/5.0/elasticsearch-installation.html
+1. https://www.elastic.co/guide/en/beats/libbeat/5.0/kibana-installation.html
+1. `ssh -NfL 5601:127.0.0.1:5601 ubuntu@<ip>`
+1. https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-installation.html
+1. https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-installation.html
+1. Change log paths in yml
