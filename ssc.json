@@ -43,10 +43,7 @@
     },
     {
       "type": "shell",
-      "inline": [
-        "sudo apt-get install -y nodejs",
-        "sudo ln -s /usr/bin/nodejs /usr/bin/node"
-      ]
+      "script": "setup_nodejs.sh"
     },
     {
       "type": "shell",

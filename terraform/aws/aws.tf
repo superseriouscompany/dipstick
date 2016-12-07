@@ -1,5 +1,5 @@
 variable "aws_ami" {
-  default = "ami-ca6833b9"
+  default = "ami-d73e64a4"
 }
 
 variable "aws_count" {
