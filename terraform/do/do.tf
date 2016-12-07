@@ -1,5 +1,5 @@
 variable "do_image_name" {
-  default = "21378062"
+  default = "21378513"
 }
 
 variable "do_count" {

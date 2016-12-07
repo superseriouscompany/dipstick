@@ -1,5 +1,5 @@
 variable "gcp_image_name" {
-  default = "packer-1481124270"
+  default = "packer-1481128993"
 }
 
 variable "gcp_instance_count" {

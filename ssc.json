@@ -37,13 +37,22 @@
       "type": "shell",
       "inline": [
         "sleep 30",
-        "sudo apt-get update",
+        "sudo apt-get update"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
         "DD_API_KEY={{user `dd_api_key`}} bash -c \"$(curl -L https://raw.githubusercontent.com/DataDog/dd-agent/master/packaging/datadog-agent/source/install_agent.sh)\""
       ]
     },
     {
       "type": "shell",
       "script": "setup_nodejs.sh"
+    },
+    {
+      "type": "shell",
+      "script": "setup_golang.sh"
     },
     {
       "type": "shell",

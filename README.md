@@ -107,5 +107,13 @@ RPS
 1. spin up the app
 1. read CPU
 1. read memory
+1. install something with apt-get on all instances
+1. start running something on all instances
+1. create a new instance size
 1. write a new nodejs app and spin that up
 1. add mysql accessible to the infrastructure via remote port
+
+
+mental shifts:
+
+* don't be afraid of building things from source
