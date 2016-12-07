@@ -97,3 +97,15 @@ RPS
 1. https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-installation.html
 1. https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-installation.html
 1. Change log paths in yml
+
+## Opening a port
+
+1. Add the port to the array in `google_compute_firewall`
+
+## Challenges
+
+1. spin up the app
+1. read CPU
+1. read memory
+1. write a new nodejs app and spin that up
+1. add mysql accessible to the infrastructure via remote port

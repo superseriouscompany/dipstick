@@ -87,6 +87,16 @@ resource "google_compute_instance" "nginx" {
   service_account {
     scopes = ["https://www.googleapis.com/auth/compute.readonly"]
   }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo docker run -d -p 9100:9100 --net=\"host\" prom/node-exporter"
+    ]
+    connection {
+      type = "ssh"
+      user = "ubuntu"
+    }
+  }
 }
 
 resource "google_compute_instance" "elk" {
