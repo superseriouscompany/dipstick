@@ -62,13 +62,21 @@ Add new server IPs to prometheus.yml
 
 ## Grafana
 
-CPU and Memory
+CPU
 
 1. `$ brew install grafana`
 1. start prometheus
 1. add prometheus datasource
 1. add prometheus dashboard
 1. import single instance json
+1. stress test CPU with `yes > /dev/null`
+
+
+MEMORY
+
+1. `sudo apt-get install stress`
+1. `watch free -m`
+1. `stress -m 1`
 
 Latency
 
