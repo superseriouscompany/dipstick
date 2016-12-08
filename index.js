@@ -22,6 +22,18 @@ app.get('/slow', function(req, res) {
   }, time);
 })
 
+app.get('/sometimes500', function(req, res) {
+  const roll = Math.random();
+
+  if( roll > 0.5 ) {
+    const err = new Error("Bad roll");
+    err.roll = roll;
+    log.error({err: err}, "Ya burnt");
+    res.status(500);
+  }
+  res.json({roll: roll});
+})
+
 app.get('*', function(req, res) {
   res.json({hi: true, good: 'great'})
 })
